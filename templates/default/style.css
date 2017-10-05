@@ -108,7 +108,7 @@ dd {
 .right { float: right; }
 /*-[ Framework ]--------------------*/
 body {
-    font: 14px/23px 'Roboto', sans-serif;
+    font: 14px/23px 'Neutra Text', sans-serif;
     : ;
     color: #555;
     background-color: #EBEBEB;
@@ -372,7 +372,7 @@ hr {
 .counter span.counting {
     width: 115px;
     height: 115px;
-    border-radius: 50%;
+    border-radius: 0px;
     border: 1px solid #fff;
     float: none;
     margin-right: 5px;
@@ -660,14 +660,14 @@ hr {
 /*-----------------------------------------------
 /* @media queries /*---------------------------------------------*/ html {   }
 
-@media screen and (max-width:1289px) { 
+@media screen and (max-width:1289px) {
     .counter span.counting {
         height: 110px;
         width: 110px;
     }
-} 
+}
 
- @media screen and (max-width: 1239px) { 
+ @media screen and (max-width: 1239px) {
     .counter span.counting {
         height: 105px;
         width: 105px;
@@ -675,7 +675,7 @@ hr {
 }
 
 
-@media screen and (max-width: 1189px) { 
+@media screen and (max-width: 1189px) {
     .counter span.counting {
         height: 100px;
         width: 100px;
@@ -683,7 +683,7 @@ hr {
 }
 
 
-@media screen and (max-width: 1140px) { 
+@media screen and (max-width: 1140px) {
     .L_left .container { margin: 0 auto }
     .L_right .container { margin: 0 auto }
     .counter span.counting:first-child { margin-left: 5px }
@@ -708,7 +708,7 @@ hr {
 }
 
 
-@media screen and (max-width:960px) { 
+@media screen and (max-width:960px) {
     img {
         max-width: 100%;
         height: auto!important;
@@ -718,8 +718,8 @@ hr {
     .L_third form { width: 100% }
 }
 
-  
-@media screen and (max-width:865px) { 
+
+@media screen and (max-width:865px) {
     #page, .container { max-width: 96% }
     footer .container { padding: 0 2% }
     .L_contact li a { font-size: 17px }
@@ -734,7 +734,7 @@ hr {
     }
 }
 /* Force hide mobile menu on > 865 */
-@media screen and (min-width:865px) { 
+@media screen and (min-width:865px) {
     .mobile-menu-active .main-container {
         -webkit-transform: translate(0,0);
         transform: translate(0,0);
@@ -744,7 +744,7 @@ hr {
         transform: translate(-300px,0);
     }
 }
-@media screen and (max-width: 760px) { 
+@media screen and (max-width: 760px) {
     .L_left { width: 100% }
     .L_right {
         width: 100%;
@@ -771,7 +771,7 @@ hr {
     .L_second .L_right .front-view-content { font-size: 17px }
     .L_third #wplauncher_contact_form .form-submit { width: 40% }
 }
-@media screen and (max-width:400px) { 
+@media screen and (max-width:400px) {
     article header { overflow: hidden }
     .slidertext { display: none }
     .L_right .wplauncher-subscribe input[type="submit"] {
@@ -791,7 +791,7 @@ hr {
     .L_contact li { font-size: 15px }
     .L_third #wplauncher_contact_form .form-submit { width: 50% }
 }
-@media screen and (max-width:350px) { 
+@media screen and (max-width:350px) {
     .L_third #wplauncher_contact_form .form-submit { width: 60% }
     .L_contact li { font-size: 13px }
 }

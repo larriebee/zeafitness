@@ -82,7 +82,7 @@
 }
 .wplauncher-editable-image-wrapper:before {
     content: "";
-    font-family: "fontello";
+    font-family: "Neutra Text";
     display: block;
     position: absolute;
     z-index: 11;

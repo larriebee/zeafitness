@@ -133,12 +133,12 @@ class WP_Launcher {
 		// 3. childtheme_dir/wplauncher
 		// 4... Use filter to add more
 		$default_paths = array(
-			WPLAUNCHER_PATH.'templates', 
+			WPLAUNCHER_PATH.'templates',
 			get_template_directory().'/launcher',
 			get_stylesheet_directory().'/launcher',
 		);
 		$this->template_paths = apply_filters( 'wplauncher_template_paths', $default_paths );
-		
+
 		add_action('init', array( $this, 'check_countdown_disable' ) );
 		if (is_admin()) {
 			// Admin side stuff
@@ -174,7 +174,7 @@ class WP_Launcher {
 		// Subscribe stuff
 		add_action( 'wp_ajax_wplauncher_ajax_subscribe', array($this, 'ajax_subscribe') );
 		add_action( 'wp_ajax_nopriv_wplauncher_ajax_subscribe', array($this, 'ajax_subscribe') );
-		
+
 		add_action( 'wp_ajax_wplauncher_get_mailchimp_lists', array($this, 'get_mailchimp_lists') );
 		add_action( 'wp_ajax_wplauncher_get_aweber_lists', array($this, 'get_aweber_lists') );
 		add_action( 'wp_ajax_wplauncher_get_getresponse_lists', array($this, 'get_getresponse_lists') );
@@ -184,29 +184,29 @@ class WP_Launcher {
 	}
 
 	function load_textdomain() {
-		load_plugin_textdomain( $this->plugin_slug, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+		load_plugin_textdomain( $this->plugin_slug, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 
 	public function admin_bar_menu() {
 		if (!$this->user_can_access_site() || !current_user_can('manage_options')) return;
 		global $wp_admin_bar;
-		
+
 		$menu_id = 'wplauncher';
 		$wp_admin_bar->add_menu(array('id' => $menu_id, 'title' => '<i class="wplauncher-icon-rocket"></i> '.__('Launcher'), 'href' => admin_url( 'options-general.php?page=launcher' )));
-		
-		
+
+
 		if (!$this->is_editor())
 			$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Edit'), 'id' => 'wplauncher-edit-template', 'href' => add_query_arg('wplauncher_edit_template', '1', get_bloginfo( 'url' ))));
-		
+
 		$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Preview'), 'id' => 'wplauncher-preview-template', 'href' => add_query_arg('wplauncher_preview_template', '1', get_bloginfo( 'url' )), 'meta' => array('target' => '_blank') ));
-		
+
 		if ($this->is_editor())
 			$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Reset Template'), 'id' => 'wplauncher-reset-template', 'href' => add_query_arg(array('wplauncher_edit_template' => '1', 'wplauncher_reset_template' => '1'), get_bloginfo( 'url' ))));
 
 		$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Settings'), 'id' => 'wplauncher-settings', 'href' => admin_url( 'options-general.php?page=launcher' )));
 		if ($this->is_editor())
 			$wp_admin_bar->add_menu(array('id' => 'wplauncher-edit-help', 'title' => ''.__('Click on any element to start editing'), 'href' => '#'));
-	
+
 		if ($this->settings['enabled']) {
 			$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Launcher page is <strong>enabled</strong>'), 'id' => 'wplauncher-enabled-help', 'href' => '#'));
 			//$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Disable Launcher Mode'), 'id' => 'wplauncher-enable', 'href' => '#'));
@@ -214,7 +214,7 @@ class WP_Launcher {
 			$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Launcher page is <strong>disabled</strong>'), 'id' => 'wplauncher-disabled-help', 'href' => '#'));
 			//$wp_admin_bar->add_menu(array('parent' => $menu_id, 'title' => __('Enable Launcher Mode'), 'id' => 'wplauncher-enable', 'href' => '#'));
 		}
-		
+
 	}
 
 	public function locate_template( $template_name, $return_full_path = true ) {
@@ -243,7 +243,7 @@ class WP_Launcher {
 			$template = $this->settings['template'];
 
 		$path = $this->locate_template($template);
-		
+
 		if (file_exists($path))
 			return get_file_data( $path, $this->default_template_headers );
 		else
@@ -264,7 +264,7 @@ class WP_Launcher {
 	public function get_templates_list() {
 		$paths = $this->template_paths;
 		$templates = array();
-		
+
 		foreach ($paths as $path) {
 			$path = trailingslashit( $path );
 			// Look for files containing our header 'Launcher template'
@@ -290,20 +290,20 @@ class WP_Launcher {
 			$template = $this->settings['template'];
 
 		$template_settings = get_option( 'wplauncher_template_data' );
-		
-		if (empty($template_settings[$template]) || !is_array($template_settings[$template])) 
+
+		if (empty($template_settings[$template]) || !is_array($template_settings[$template]))
 			$fields = array();
 		else
 			$fields = $template_settings[$template];
-		
+
 		$output = array();
-		
+
 		foreach ($this->template_elements as $elem) {
 			if (!$this->template_supports($elem, $template))
 				continue; // template doesn't support it
-			if (!empty($fields[$elem.'_hidden'])) 
+			if (!empty($fields[$elem.'_hidden']))
 				continue; // hidden element = not active
-			
+
 			// let's assume it's okay now
 			$output[] = $elem;
 		}
@@ -360,7 +360,7 @@ class WP_Launcher {
 	    add_options_page(__('Launcher', $this->plugin_slug), __('Launcher', $this->plugin_slug), 'manage_options', 'launcher', array( $this, 'settings_page' ) );
 	}
 	function admin_scripts() {
-		wp_enqueue_style( 'wplauncher-fontello', WPLAUNCHER_URI.'css/fontello.css' );
+		wp_enqueue_style( 'wplauncher-fontello', WPLAUNCHER_URI.'css/neutra-text.css' );
 		wp_enqueue_style( 'wplauncher-admin', WPLAUNCHER_URI.'css/wplauncher-admin.css' );
 		if (get_current_screen()->id == 'settings_page_launcher') {
 			add_thickbox();
@@ -374,7 +374,7 @@ class WP_Launcher {
 	}
 	function frontend_scripts() {
 		if ($this->user_can_access_site()) { // stuff for the admin bar on frontend
-			wp_enqueue_style( 'wplauncher-fontello', WPLAUNCHER_URI.'css/fontello.css' );
+			wp_enqueue_style( 'wplauncher-fontello', WPLAUNCHER_URI.'css/neutra-text.css' );
 			wp_enqueue_style( 'wplauncher-admin', WPLAUNCHER_URI.'css/wplauncher-admin.css' );
 		}
 	}
@@ -393,10 +393,10 @@ class WP_Launcher {
                 <?php settings_fields('wplauncher-settings-group'); ?>
 
                 <h3 class="nav-tab-wrapper wplauncher-nav-tab-wrapper">
-			    	<a href="#" class="nav-tab nav-tab-active" id="wplauncher-tab-general" data-rel="#wplauncher-settings-general"><?php _e('General', $this->plugin_slug); ?></a> 
-			    	<a href="#" class="nav-tab" id="wplauncher-tab-templates" data-rel="#wplauncher-settings-templates"><?php _e('Templates', $this->plugin_slug); ?></a> 
-			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'countdown' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-countdown" data-rel="#wplauncher-settings-countdown"><?php _e('Countdown Timer', $this->plugin_slug); ?></a> 
-			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'subscribe' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-subscribe" data-rel="#wplauncher-settings-subscribe"><?php _e('Subscribe Form', $this->plugin_slug); ?></a> 
+			    	<a href="#" class="nav-tab nav-tab-active" id="wplauncher-tab-general" data-rel="#wplauncher-settings-general"><?php _e('General', $this->plugin_slug); ?></a>
+			    	<a href="#" class="nav-tab" id="wplauncher-tab-templates" data-rel="#wplauncher-settings-templates"><?php _e('Templates', $this->plugin_slug); ?></a>
+			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'countdown' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-countdown" data-rel="#wplauncher-settings-countdown"><?php _e('Countdown Timer', $this->plugin_slug); ?></a>
+			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'subscribe' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-subscribe" data-rel="#wplauncher-settings-subscribe"><?php _e('Subscribe Form', $this->plugin_slug); ?></a>
 			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'twitter' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-twitter" data-rel="#wplauncher-settings-twitter"><?php _e('Twitter Feed', $this->plugin_slug); ?></a>
 			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'contact' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-contact" data-rel="#wplauncher-settings-contact"><?php _e('Contact Form', $this->plugin_slug); ?></a>
 			    	<a href="#" class="nav-tab<?php echo (!$this->template_supports( 'social' ) ? ' wplauncher-not-supported' : ''); ?>" id="wplauncher-tab-social" data-rel="#wplauncher-settings-social"><?php _e('Social Links', $this->plugin_slug); ?></a>
@@ -407,7 +407,7 @@ class WP_Launcher {
 		                    <?php $this->options_field_checkbox('wplauncher_options[enabled]', __('Enable Launcher Page', $this->plugin_slug), __('If enabled, only administrators can access the frontend of the site.', $this->plugin_slug));
 
 		                    $this->options_field_text('wplauncher_options[page_title]', __('Page Title', $this->plugin_slug));
-		                    
+
 		                    $this->options_field_text('wplauncher_options[favicon]', __('Favicon', $this->plugin_slug), '', array('class' => 'large-text'));
 							?>
 							<script type="text/javascript">
@@ -416,7 +416,7 @@ class WP_Launcher {
 									.insertAfter('#wplauncher_options-favicon');
 							    $('#upload-btn').click(function(e) {
 							        e.preventDefault();
-							        var image = wp.media({ 
+							        var image = wp.media({
 							            title: 'Upload Image',
 							            // mutiple: true if you want to upload multiple files at once
 							            multiple: false
@@ -437,14 +437,14 @@ class WP_Launcher {
 		                    <?php
 		                    $this->options_field_text('wplauncher_options[meta_description]', __('Meta Description', $this->plugin_slug), __('Leave this field empty to omit meta description tag.', $this->plugin_slug), array('class' => 'large-text'));
 		                    $this->options_field_checkbox('wplauncher_options[noindex]', __('<em>Noindex</em> Meta', $this->plugin_slug), __('If enabled, search engines won\'t index the launcher page, regardless of your robots.txt settings.', $this->plugin_slug));
-		                    
+
 		                    // select user roles
 		                    /*$roles = array();
 		                    foreach (get_editable_roles() as $role_name => $role_info) {
 		                    	$roles[$role_name] = $role_name;
 		                    }
 		                    $this->options_field_select('wplauncher_options[admin_role]', $roles, __('Access Role', $this->plugin_slug), __('Select user roles who will see the real site instead of the launcher page.', $this->plugin_slug), array('multiple' => 'multiple'));*/
-		                    
+
 		                    //$this->options_field_select('wplauncher_options[user_access]', array('administrator' => __('Administrator', $this->plugin_slug), 'loggedin' => __('All logged-in users', $this->plugin_slug)), __('Access Role', $this->plugin_slug), __('Choose whether only administrators will see the real site instead of the launcher page, or any logged in user as well.', $this->plugin_slug));
 
 		                    $this->options_field_textarea('wplauncher_options[custom_css]', __('Custom CSS Code', $this->plugin_slug), __('Additional CSS code to adjust styling.', $this->plugin_slug), array('class' => 'large-text'));
@@ -464,7 +464,7 @@ class WP_Launcher {
 	    				<div class="wplauncher-error"<?php echo ($this->template_supports( 'countdown' ) ? ' style="display: none"' : ''); ?>>
 	    					<p><?php _e('The currently selected template does not declare support for the Countdown Timer. It is possible that this element won\'t show up on the launcher page.', $this->plugin_slug); ?></p>
 	    				</div>
-	    				
+
 	    				<table class="form-table">
 	    					<?php
 		                    $this->options_field_text('wplauncher_options[countdown][date_formatted]', __('Countdown To', $this->plugin_slug));
@@ -493,7 +493,7 @@ class WP_Launcher {
 		                    	// Mailchimp
 		                    	$this->options_field_text('wplauncher_options[subscribe][mailchimp][api_key]', __('Mailchimp <a href="http://kb.mailchimp.com/accounts/management/about-api-keys" target="_blank">API key</a>', $this->plugin_slug), '', array(), 'show-if-subscribe if-mailchimp');
 		                    	$this->options_field_select('wplauncher_options[subscribe][mailchimp][list]', array(), __('List', $this->plugin_slug), '', array(), 'show-if-subscribe if-mailchimp');
-		                    
+
 		                    	// Aweber
 		                    	?>
 		                    	<tr class="show-if-subscribe if-aweber">
@@ -526,7 +526,7 @@ class WP_Launcher {
 
 		                    	// Feedburner
 		                    	$this->options_field_text('wplauncher_options[subscribe][feedburner][username]', __('Feedburner username', $this->plugin_slug), '', array(), 'show-if-subscribe if-feedburner');
-		                    	
+
 
 		                    	$this->options_field_checkbox('wplauncher_options[subscribe][include_name]', __('Include name field', $this->plugin_slug), '', array(), 'show-if-subscribe if-mailchimp if-aweber if-getresponse if-campaignmonitor if-madmimi');
 		                    	$this->options_field_checkbox('wplauncher_options[subscribe][include_last_name]', __('Include last name field', $this->plugin_slug), '', array(), 'show-if-subscribe if-mailchimp if-aweber if-getresponse if-campaignmonitor if-madmimi');
@@ -547,7 +547,7 @@ class WP_Launcher {
 
 	    				<table class="form-table">
 	    					<p><?php _e('You can generate your API Key from here:', $this->plugin_slug); ?> <a href="https://apps.twitter.com/">https://apps.twitter.com/</a></p>
-	    					<?php 
+	    					<?php
 		                    $this->options_field_text('wplauncher_options[twitter][username]', __('Twitter Username', $this->plugin_slug));
 		                    $this->options_field_text('wplauncher_options[twitter][api_key]', __('API Key', $this->plugin_slug));
 		                    $this->options_field_text('wplauncher_options[twitter][api_secret]', __('API Secret', $this->plugin_slug));
@@ -564,7 +564,7 @@ class WP_Launcher {
 	    				</div>
 
 	    				<table class="form-table">
-	    					<?php 
+	    					<?php
 		                    $this->options_field_text('wplauncher_options[contact][sendto]', __('Send emails to', $this->plugin_slug), '', array('class' => 'large-text'));
 		                    $this->options_field_text('wplauncher_options[contact][label_name]', __('Name field label', $this->plugin_slug), '', array('class' => 'large-text'));
 		                    $this->options_field_text('wplauncher_options[contact][label_email]', __('Email field label', $this->plugin_slug), '', array('class' => 'large-text'));
@@ -592,7 +592,7 @@ class WP_Launcher {
 		                </table>
 	    			</div>
 	    		</div>
-                
+
                 <?php submit_button(); ?>
             </form>
 
@@ -604,10 +604,10 @@ class WP_Launcher {
 		if ($this->user_can_access_site() && empty($_GET['wplauncher_edit_template']) && empty($_GET['wplauncher_preview_template'])) {
 			return $template;
 		}
-		if (($this->settings['enabled'] 
-			|| (!empty($_GET['wplauncher_edit_template']) 
+		if (($this->settings['enabled']
+			|| (!empty($_GET['wplauncher_edit_template'])
 				&& $this->user_can_access_site())
-			|| (!empty($_GET['wplauncher_preview_template'])) 
+			|| (!empty($_GET['wplauncher_preview_template']))
 				&& $this->user_can_access_site())
 				&& $this->locate_template( $this->settings['template'] ) ) { // yes this looks weird
 			$template = $this->locate_template( $this->settings['template'] );
@@ -632,14 +632,14 @@ class WP_Launcher {
 				break;
 			}
 		}
-		
+
 		$parsed = wp_parse_args( $args, array_merge( array('id' => '', 'default' => ''), $default ) );
 		if ( empty( $parsed['id'] ) ) {
-			$parsed['id'] = 'field_'.$this->editable_fields_count.'_'.substr(md5($parsed['default']), 0, 4).'_'.$type;				
+			$parsed['id'] = 'field_'.$this->editable_fields_count.'_'.substr(md5($parsed['default']), 0, 4).'_'.$type;
 		}
 		if ($type == 'image' && empty($parsed['default'])) {
-			$parsed['default'] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAABLCAYAAAA4TnrqAAAACXBIWXMAAAsTAAALEwEAmpwYAAABNmlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjarY6xSsNQFEDPi6LiUCsEcXB4kygotupgxqQtRRCs1SHJ1qShSmkSXl7VfoSjWwcXd7/AyVFwUPwC/0Bx6uAQIYODCJ7p3MPlcsGo2HWnYZRhEGvVbjrS9Xw5+8QMUwDQCbPUbrUOAOIkjvjB5ysC4HnTrjsN/sZ8mCoNTIDtbpSFICpA/0KnGsQYMIN+qkHcAaY6addAPAClXu4vQCnI/Q0oKdfzQXwAZs/1fDDmADPIfQUwdXSpAWpJOlJnvVMtq5ZlSbubBJE8HmU6GmRyPw4TlSaqo6MukP8HwGK+2G46cq1qWXvr/DOu58vc3o8QgFh6LFpBOFTn3yqMnd/n4sZ4GQ5vYXpStN0ruNmAheuirVahvAX34y/Axk/96FpPYgAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAUggAARVYAAA6lwAAF2/XWh+QAAAAh0lEQVR42uzQMQEAMAgDsDH/ouoMLPDwJRJSSfqx8hXIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgawTAwAA//8DAHhRA9W4iYyFAAAAAElFTkSuQmCC';	
-		} 
+			$parsed['default'] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAABLCAYAAAA4TnrqAAAACXBIWXMAAAsTAAALEwEAmpwYAAABNmlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjarY6xSsNQFEDPi6LiUCsEcXB4kygotupgxqQtRRCs1SHJ1qShSmkSXl7VfoSjWwcXd7/AyVFwUPwC/0Bx6uAQIYODCJ7p3MPlcsGo2HWnYZRhEGvVbjrS9Xw5+8QMUwDQCbPUbrUOAOIkjvjB5ysC4HnTrjsN/sZ8mCoNTIDtbpSFICpA/0KnGsQYMIN+qkHcAaY6addAPAClXu4vQCnI/Q0oKdfzQXwAZs/1fDDmADPIfQUwdXSpAWpJOlJnvVMtq5ZlSbubBJE8HmU6GmRyPw4TlSaqo6MukP8HwGK+2G46cq1qWXvr/DOu58vc3o8QgFh6LFpBOFTn3yqMnd/n4sZ4GQ5vYXpStN0ruNmAheuirVahvAX34y/Axk/96FpPYgAAACBjSFJNAAB6JQAAgIMAAPn/AACA6AAAUggAARVYAAA6lwAAF2/XWh+QAAAAh0lEQVR42uzQMQEAMAgDsDH/ouoMLPDwJRJSSfqx8hXIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgSxZsmTJkqVAlixZsmTJUiBLlixZsmQpkCVLlixZshTIkiVLlixZCmTJkiVLliwFsmTJkiVLlgJZsmTJkiVLgawTAwAA//8DAHhRA9W4iYyFAAAAAElFTkSuQmCC';
+		}
 		return $parsed;
 	}
 
@@ -669,10 +669,10 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
-				}			
+				}
 			}
 		}
 
@@ -694,17 +694,17 @@ class WP_Launcher {
 
 			// allow width:300|height:200 format
 			if (is_string($params['meta'])) $params['meta'] = str_replace(array(':', '|'), array('=', '&'), $params['meta']);
-			
+
 			$meta = wp_parse_args( $params['meta'], array() );
-			
+
 			// class attribute gets appended
 			if (!empty($meta['class'])) {
 				$classes .= ' '.trim($meta['class']);
 				unset($meta['class']);
 			}
-			
+
 			unset($meta['id']); // don't do that
-			
+
 			foreach ($meta as $attr_k => $attr_v) {
 				$extra_attrs .= ' '.$attr_k.'="'.trim($attr_v, '"').'"';
 			}
@@ -718,10 +718,10 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
-				}			
+				}
 			}
 		}
 		echo '<img class="'.$classes.'" src="'.$value.'" id="'.$field_id.'" style="'.$style_attr.'"'.$hideable_attrs.$extra_attrs.'>';
@@ -736,24 +736,24 @@ class WP_Launcher {
 		$style_attr = '';
 		$bg_attrs = ' data-backgroundid="'.$params['id'].'" data-background="'.$value.'"';
 		if (!empty($value)) {
-			$style_attr .= ' background-image: url('.$value.');';			
+			$style_attr .= ' background-image: url('.$value.');';
 		}
 
 		if ( !empty( $params['meta'] ) ) {
 
 			// allow class:x|attr2:y format
 			if (is_string($params['meta'])) $params['meta'] = str_replace(array(':', '|'), array('=', '&'), $params['meta']);
-			
+
 			$meta = wp_parse_args( $params['meta'], array() );
-			
+
 			// class attribute gets appended
 			if (!empty($meta['class'])) {
 				$classes .= ' '.trim($meta['class']);
 				unset($meta['class']);
 			}
-			
+
 			unset($meta['id']); // don't do that
-			
+
 			foreach ($meta as $attr_k => $attr_v) {
 				$extra_attrs .= ' '.$attr_k.'="'.trim($attr_v, '"').'"';
 			}
@@ -771,7 +771,7 @@ class WP_Launcher {
 		$style_attr = '';
 		$color_attrs = ' data-colorid="'.$params['id'].'" data-color="'.$value.'"';
 		if (!empty($value)) {
-			$style_attr .= ' color: '.$value.';';			
+			$style_attr .= ' color: '.$value.';';
 		}
 		echo ' class="'.$classes.'" style="'.$style_attr.'"'.$color_attrs;
 	}
@@ -785,10 +785,10 @@ class WP_Launcher {
 		$style_attr = '';
 		$hideable_attrs = ' data-hideid="'.$params['id'].'" data-hidden="'.$value.'"';
 		if (!empty($value)) {
-			$classes .= ' wplauncher-hidden';	
+			$classes .= ' wplauncher-hidden';
 			if ( ! $this->is_editor() ) {
 				$style_attr .= ' display: none;';
-			}			
+			}
 		}
 		echo ' class="'.$classes.'" style="'.$style_attr.'"'.$hideable_attrs;
 	}
@@ -828,7 +828,7 @@ class WP_Launcher {
 
 	public function editable_section_start( $params ) {
 		$params = $this->init_editable( 'section', $params, array( 'hidden' => 0 ));
-		
+
 		$section_id = $params['id'];
 		$value = $this->get_editable_value( $section_id, $params['hidden'] );
 
@@ -837,10 +837,10 @@ class WP_Launcher {
 		$style_attr2 = '';
 		$hideable_attrs = ' data-sectionid="'.$section_id.'" data-hidden="'.$value.'"';
 		if (!empty($value)) {
-			$classes .= ' wplauncher-hidden-section';	
+			$classes .= ' wplauncher-hidden-section';
 			//if ( $this->is_editor() ) {
 				$style_attr2 .= ' display: none;';
-			//}			
+			//}
 		}
 
 		//if (!empty($params['edit_color'])) {
@@ -898,7 +898,7 @@ class WP_Launcher {
 
 		// footer code
 		echo $this->settings['footer_code'];
-		
+
 		if ( ! $this->is_editor() ) return; // below scripts only needed when in editor mode
 
 		echo '<link rel="stylesheet" href="'.WPLAUNCHER_URI.'css/wplauncher-editor.css">';
@@ -923,7 +923,7 @@ class WP_Launcher {
 		echo '<script src="' . WPLAUNCHER_URI . 'js/shortcode.min.js' .'"></script>';
 		echo '<link rel="stylesheet" href="' . WPLAUNCHER_URI . 'css/thickbox.css' .'">';
 		echo '<script src="' . WPLAUNCHER_URI . 'js/media-upload.js' .'"></script>';
-		
+
 
 		// "Replicate" the admin bar
 		// Can be disabled using filter if needed
@@ -953,9 +953,9 @@ class WP_Launcher {
 			$output .= '<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />';
 
 		$output .= '<script src="'.WPLAUNCHER_URI. 'js/jquery.js'.'"></script>';
-		$output .= '<link rel="stylesheet" href="'.WPLAUNCHER_URI.'css/fontello.css">';
+		$output .= '<link rel="stylesheet" href="'.WPLAUNCHER_URI.'css/neutra-text.css">';
 		$output .= '<script>var ajaxurl = "'.admin_url( 'admin-ajax.php' ).'", ajax_save_url = "'.add_query_arg('action', 'wplauncher_save_template_data', admin_url( 'admin-ajax.php' )).'", wplauncher_template = "'.$this->settings['template'].'";</script>';
-		
+
 		if ($this->is_editor())
 			$output .= '<script src="'.WPLAUNCHER_URI.'js/jquery.jeditable.min.js"></script>';
 
@@ -969,7 +969,7 @@ class WP_Launcher {
 
 	public function template_supports( $feature, $template = false ) {
 		$headers = $this->get_template_info( $template );
-		if (empty($headers['Supports'])) 
+		if (empty($headers['Supports']))
 			return false;
 
 		$template_features = array_map('trim', explode(',', $headers['Supports']));
@@ -1027,7 +1027,7 @@ class WP_Launcher {
 			}
 			$params['show_links'] = false;
 		}
-		
+
 		$classes = 'wplauncher-editable';
 		$style_attr = '';
 		$color_attrs = '';
@@ -1049,15 +1049,15 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
-				}			
+				}
 			}
 		}
-		
+
 		$name_index = array('facebook' => 'Facebook', 'twitter' => 'Twitter', 'youtube' => 'Youtube', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'googleplus' => 'Google+', 'rss' => 'RSS');
-		
+
 		$output = '';
 		$output_arr = array();
 		foreach ($this->settings['social'] as $site => $url) {
@@ -1080,7 +1080,7 @@ class WP_Launcher {
 			echo apply_filters( 'wplauncher_social', $output );
 			echo '</div>';
 		}
-		
+
 	}
 
 	public function template_tag_countdown( $params = '' ) {
@@ -1098,17 +1098,17 @@ class WP_Launcher {
 
 		$params = wp_parse_args( $params, array(
 			'format' => '
-				<span class="wplauncher-days">%D</span> 
+				<span class="wplauncher-days">%D</span>
 					 <span class="wplauncher-date-sep">'.__('days', $this->plugin_slug).'</span>
 				<span class="wplauncher-hours">%H</span>
 					<span class="wplauncher-time-sep">:</span>
 				<span class="wplauncher-minutes">%M</span>
 					<span class="wplauncher-time-sep">:</span>
-				<span class="wplauncher-seconds">%S</span>', 
+				<span class="wplauncher-seconds">%S</span>',
 		'refresh_rate' => 1000,
 		'hideable' => 1
 		) );
-		
+
 		$classes = 'wplauncher-editable';
 		$style_attr = '';
 		$color_attrs = '';
@@ -1130,10 +1130,10 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
-				}			
+				}
 			}
 		}
 
@@ -1151,7 +1151,7 @@ class WP_Launcher {
 				});
 			});
 		</script>
-		<?php 
+		<?php
 		$output = ob_get_clean();
 		echo apply_filters( 'wplauncher_countdown', $output );
 	}
@@ -1167,8 +1167,8 @@ class WP_Launcher {
 		//check if cache needs update
 		$mts_twitter_plugin_last_cache_time = get_option('mts_twitter_plugin_last_cache_time');
 		$diff = time() - $mts_twitter_plugin_last_cache_time;
-		$crt = $this->settings['twitter']['cache_time'] * 3600;						
-		//	yes, it needs update			
+		$crt = $this->settings['twitter']['cache_time'] * 3600;
+		//	yes, it needs update
 		if($diff >= $crt || empty($mts_twitter_plugin_last_cache_time)){
 			require_once('includes/twitteroauth.php');
 			$connection = new Twitteroauth($this->settings['twitter']['api_key'], $this->settings['twitter']['api_secret'], $this->settings['twitter']['access_token'], $this->settings['twitter']['access_token_secret']);
@@ -1182,23 +1182,23 @@ class WP_Launcher {
 				if ($this->is_editor()) {
 					if($tweets->errors[0]->message == 'Invalid or expired token'){
 						echo '<span class="wplauncher-configure wplauncher-configure-twitter">'.$tweets->errors[0]->message.'!</strong><br />You\'ll need to regenerate it <a href="https://dev.twitter.com/apps" target="_blank">here</a></span>!';
-					} else { 
+					} else {
 						echo '<span class="wplauncher-configure wplauncher-configure-twitter">'.$tweets->errors[0]->message.'</strong>';
 					}
 				}
-				
+
 				return;
 			}
 			for($i = 0;$i <= count($tweets); $i++){
 				if(!empty($tweets[$i])){
 					$tweets_array[$i]['created_at'] = $tweets[$i]->created_at;
-					$tweets_array[$i]['text'] = $tweets[$i]->text;			
-					$tweets_array[$i]['status_id'] = $tweets[$i]->id_str;			
+					$tweets_array[$i]['text'] = $tweets[$i]->text;
+					$tweets_array[$i]['status_id'] = $tweets[$i]->id_str;
 				}
-			}			
-			//save tweets to wp option 		
-			update_option('mts_twitter_plugin_tweets',serialize($tweets_array));							
-			update_option('mts_twitter_plugin_last_cache_time',time());		
+			}
+			//save tweets to wp option
+			update_option('mts_twitter_plugin_tweets',serialize($tweets_array));
+			update_option('mts_twitter_plugin_last_cache_time',time());
 			//echo '<!-- twitter cache has been updated! -->';
 		}
 		$mts_twitter_plugin_tweets = maybe_unserialize(get_option('mts_twitter_plugin_tweets'));
@@ -1238,7 +1238,7 @@ class WP_Launcher {
 				$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 				$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 				if (!empty($hideable_value)) {
-					$classes .= ' wplauncher-hidden';	
+					$classes .= ' wplauncher-hidden';
 					if ( ! $this->is_editor() ) {
 						$style_attr .= ' display: none;';
 					}
@@ -1260,7 +1260,7 @@ class WP_Launcher {
 			}
 			$output .= $params['after'];
 		}
-		
+
 		echo '<div class="wplauncher-twitter '.$classes.'" style="'.$style_attr.'"'.$color_attrs.$hideable_attrs.'>';
 		echo apply_filters( 'wplauncher_twitter', $output );
 		echo '</div>';
@@ -1277,18 +1277,18 @@ class WP_Launcher {
 		//Convert attags to twitter profiles in &lt;a&gt; links
 		$tweet = preg_replace("/@([A-Za-z0-9\/\.]*)/", "<a href=\"http://www.twitter.com/$1\">@$1</a>", $tweet);
 		return $tweet; // return the status
-	}					
-					
-	//convert dates to readable format	
-	public function twitter_relative_time($a) {			
+	}
+
+	//convert dates to readable format
+	public function twitter_relative_time($a) {
 		$b = strtotime("now");  //get current timestampt
 		$c = strtotime($a); //get timestamp when tweet created
 		$d = $b - $c; //get difference
 		$minute = 60; //calculate different time values
 		$hour = $minute * 60;
 		$day = $hour * 24;
-		$week = $day * 7;				
-		if(is_numeric($d) && $d > 0) {				
+		$week = $day * 7;
+		if(is_numeric($d) && $d > 0) {
 			if($d < 3) return "right now"; //if less then 3 seconds
 			if($d < $minute) return sprintf(__('%s seconds ago', $this->plugin_slug), floor($d)); //if less then minute
 			if($d < $minute * 2) return __('about 1 minute ago', $this->plugin_slug); //if less then 2 minutes
@@ -1332,7 +1332,7 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
 				}
@@ -1379,7 +1379,7 @@ class WP_Launcher {
 			$hideable_value = $this->get_editable_value( $hideable_params['id'], $hideable_params['hidden'] );
 			$hideable_attrs = ' data-hideid="'.$hideable_params['id'].'" data-hidden="'.$hideable_value.'"';
 			if (!empty($hideable_value)) {
-				$classes .= ' wplauncher-hidden';	
+				$classes .= ' wplauncher-hidden';
 				if ( ! $this->is_editor() ) {
 					$style_attr .= ' display: none;';
 				}
@@ -1558,7 +1558,7 @@ class WP_Launcher {
                 	<p class="description"><label>
                 <?php } ?>
                 <input type="hidden" name="<?php echo $attrs['name']; ?>" value="0">
-            	<input<?php echo $attributes; ?>> 
+            	<input<?php echo $attributes; ?>>
             	<?php if (!empty($description)) { ?>
                 	<?php echo $description; ?></p>
                 <?php } ?>
@@ -1586,7 +1586,7 @@ class WP_Launcher {
             <th><label for="<?php echo $attrs['id']; ?>"><?php echo $label; ?></label></th>
             <td>
             	<select<?php echo $attributes; ?>>
-            		<?php 
+            		<?php
             		foreach ($options as $option_val => $option_label) {
             			echo '<option value="'.$option_val.'"'.selected($option_val, $selected, false).'>'.$option_label.'</option>';
             		}
@@ -1617,24 +1617,24 @@ class WP_Launcher {
 			echo $template['Name'];
 			if ($thumb)
 				echo '<img src="'.$thumb.'" width="220" />';
-			
+
 			echo '<input type="hidden" class="wplauncher-template-supports" value="'.strtolower($template['Supports']).'" /> ';
 			echo '</label>';
 		}
 		echo '</div>';
 	}
 
-	function var_array_lookup($arr, $string) { 
-	    preg_match_all('/\[([^\]]*)\]/', $string, $arr_matches, PREG_PATTERN_ORDER); 
-	    
-	    $return = $arr; 
+	function var_array_lookup($arr, $string) {
+	    preg_match_all('/\[([^\]]*)\]/', $string, $arr_matches, PREG_PATTERN_ORDER);
+
+	    $return = $arr;
 	    foreach($arr_matches[1] as $dimension) {
         	if (isset($return[$dimension]))
-        		$return = $return[$dimension]; 
-	    } 
-	        
-	    return $return; 
-    } 
+        		$return = $return[$dimension];
+	    }
+
+	    return $return;
+    }
 
 
     /**

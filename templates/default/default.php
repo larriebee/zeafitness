@@ -20,13 +20,13 @@ if (!defined('ABSPATH')) die(); ?>
 		<link href='//fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="<?php wplauncher_template_directory_uri(); ?>/style.css">
 	</head>
-	<body id ="blog" class="home blog main" itemscope itemtype="http://schema.org/WebPage">  
-		<div class="main-container">  			        	
-	    	<?php wplauncher_section_start(array('default_bg' => wplauncher_get_template_directory_uri().'/start.jpg', 'class' => 'L_first')); ?>
+	<body id ="blog" class="home blog main" itemscope itemtype="http://schema.org/WebPage">
+		<div class="main-container">
+	    	<?php wplauncher_section_start(array('default_bg' => wplauncher_get_template_directory_uri().'/gym.jpg', 'class' => 'L_first')); ?>
 			<div class="L_left">
 				<div class="container">
 					<h1 id="logo" class="text-logo" itemprop="headline">
-						<?php wplauncher_image('hideable=1&default='.wplauncher_get_template_directory_uri().'/logo.png'); ?>
+						<?php wplauncher_image('hideable=1&default='.wplauncher_get_template_directory_uri().'/logo1.png'); ?>
 					</h1>
 					<div class="front-view-content">
 						<?php wplauncher_text('type=textarea&edit_color=1&default=Sorry, we are working on something that will completely blow your mind away. Please come back soon!'); ?>
@@ -45,19 +45,16 @@ if (!defined('ABSPATH')) die(); ?>
 				</div>
 			</div>
 			<div class="L_right">
-				<div class="container"> 
-	                <h3 class="front-view-title">
-						<?php wplauncher_text('Stay Updated'); ?>
-					</h3>
-					<div class="front-view-content">
-						<?php wplauncher_text('Subscribe for latest updates on our websites from our dream team'); ?>
-					</div>
-					<div id="mts_subscribe_widget-2" class="widget mts_subscribe_widget">        	
-						<?php wplauncher_subscribe(); ?>
-						<?php if (wplauncher_get_field('subscribe_color')): ?>
-							<style type="text/css">.L_right .wplauncher-subscribe input[type="text"], .L_right .wplauncher-subscribe input[type="email"], .L_right .wplauncher-subscribe input[type="submit"] { border-color: <?php echo wplauncher_get_field('subscribe_color'); ?>; } .L_right .wplauncher-subscribe input[type="submit"] { background-color: <?php echo wplauncher_get_field('subscribe_color'); ?>; }</style>
-						<?php endif; ?>
-					</div>
+				<div class="container">
+					<h3 class="front-view-title">
+					 <?php wplauncher_text('Contact Us'); ?>
+				 </h3>
+				 <div class="contact-form">
+					 <?php wplauncher_contact('edit_color=1'); ?>
+					 <?php if (wplauncher_get_field('contact_color')): ?>
+						 <style type="text/css">#wplauncher_contact_form input, #wplauncher_contact_form textarea { border-color: <?php echo wplauncher_get_field('contact_color'); ?>; } .L_third #wplauncher_contact_submit { background-color: <?php echo wplauncher_get_field('contact_color'); ?>; }</style>
+					 <?php endif; ?>
+				 </div>
 				</div>
 			</div>
 		<?php wplauncher_section_end(); ?>
@@ -108,7 +105,7 @@ if (!defined('ABSPATH')) die(); ?>
 				</div>
 			</div>
 			<div class="L_right">
-				<div class="container"> 
+				<div class="container">
             		<div class="L_contact">
             			<ul class="left">
 							<li<?php wplauncher_hideable_attr(); ?>><i class="wplauncher-icon wplauncher-icon-phone"></i> <?php wplauncher_text('default=012-345-6787&hideable=0&edit_color=0') ?></li>

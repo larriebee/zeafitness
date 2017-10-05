@@ -1,15 +1,11 @@
 @font-face {
-    font-family: 'fontello';
-    src: url('../font/fontello.eot?97598177');
-    src: url('../font/fontello.eot?97598177#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff?97598177') format('woff'),
-       url('../font/fontello.ttf?97598177') format('truetype'),
-       url('../font/fontello.svg?97598177#fontello') format('svg');
+    font-family: 'Neutra Text';
+    src: url('../font/neutra-text.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
-} 
+}
 [class^="wplauncher-icon-"]:before, [class*=" wplauncher-icon-"]:before {
-    font-family: "fontello";
+    font-family: "Neutra Text";
     font-style: normal;
     font-weight: normal;
     speak: none;
@@ -42,7 +38,7 @@
     /* Uncomment for 3D effect */
     /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
- 
+
 .wplauncher-icon-brush:before { content: '\e800'; } /* '' */
 .wplauncher-icon-pencil:before { content: '\e801'; } /* '' */
 .wplauncher-icon-eye:before { content: '\e802'; } /* '' */
